@@ -9,7 +9,7 @@ function czysc_main() {
 
 function ustaw_main() {
     //czysc_main();
-    $('main').app('strona główna - tu nic nie ma');
+    $('main').text('strona główna - tu nic nie ma');
 }
 
 function wyslij_dane() {
@@ -20,20 +20,26 @@ function wyslij_dane() {
     } else if (haslo === '') {
         alert('Podaj hasło!');
     } else {
-        $.post("/ajax/login/", {'login': login, 'haslo': haslo}, function (odp) {
-            if (odp.istnieje == 'false') {
-                // alert("taki użytkownik nie istnieje!");
-                $('main').append("mordo nie istnieje");
-            } else {
-                $('main').append("mordo istnieje");
-                // localStorage.setItem('login', login);
-                // localStorage.setItem('haslo', haslo);
-                // $('#login').attr("onclick", "wyloguj();");
-                // $('#login').text("Wyloguj");
-                //alert('Witaj ' + login);
-                //ustaw_main();
-            }
-        });
+        // $.post("/ajax/login/", {'login': login, 'haslo': haslo},
+        //     () => {
+        //         $('main').append("mordo istnieje");
+        //         alert("istnieje!");
+        //         localStorage.setItem('login', login);
+        //         localStorage.setItem('haslo', haslo);
+        //         $('#login').attr("onclick", "wyloguj();");
+        //         $('#login').text("Wyloguj");
+        //         alert('Witaj ' + login);
+        //         ustaw_main();
+        //     }).fail(() => {
+        //         alert("taki użytkownik nie istnieje!");
+        //     });
+        $.post('/ajax/login/', {'login': login, 'haslo': haslo})
+    .done(function(msg){ alert('Witaj ' + login); })
+    .fail(function(xhr, status, error) {
+        console.log(status);
+        console.log(error);
+        alert("taki użytkownik nie istnieje!");
+    });
     }
 }
 

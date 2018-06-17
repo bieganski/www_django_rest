@@ -15,6 +15,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Value as V, Q, Count
 from django.db.models.functions import Concat
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 def main(request):
     return render(request, 'linie_lotnicze/main.html', {})
@@ -117,10 +118,12 @@ def ajax_loguj(request):
     if 'login' not in request.POST or 'haslo' not in request.POST:
         raise PermissionDenied
     user = authenticate(username=request.POST['login'], password=request.POST['haslo'])
+    print(request.POST['login'] + request.POST['haslo'])
     # authenticate nie ustawia sesji (bestanowe)
     if user is None:
-        return JsonResponse({"istnieje" : "false"})
-    return JsonResponse({"istnieje" : "true"})
+        raise PermissionDenied
+    print("udalo sie")
+    return HttpResponse()
 
 
 
