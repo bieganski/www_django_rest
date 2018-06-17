@@ -15,7 +15,7 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Value as V, Q, Count
 from django.db.models.functions import Concat
 from django.views.decorators.csrf import csrf_exempt
-import json
+from django.core import serializers
 
 def main(request):
     return render(request, 'linie_lotnicze/main.html', {})
@@ -128,13 +128,16 @@ def ajax_loguj(request):
 
 
 def daj_liste_pilotow(request):
-    return JsonResponse({"piloci": list(Zaloga.objects.all())})
+    response = serializers.serialize("json", Zaloga.objects.all())
+    return HttpResponse(response, content_type='application/json')
 
 def daj_liste_lotow(request):
-    if 'date' not in request.query_params:
+    if request.GET['data'] is None:
         return Lot.objects.none()
-    data = datetime.strptime(request.query_params.get('data'), '%Y-%m-%d')
-    return JsonResponse({"loty": Lot.objects.filter(poczatek_czas=data).order_by('poczatek_czas')})
+    data = datetime.strptime(request.GET['data'], '%Y-%m-%d')
+    #return JsonResponse({"loty": Lot.objects.filter(poczatek_czas=data).order_by('poczatek_czas')})
+    response = serializers.serialize("json", Lot.objects.all().order_by('poczatek_czas'))
+    return HttpResponse(response, content_type='application/json')
 
 
 def zalogi_data(request):
@@ -192,8 +195,8 @@ def rejestruj_pilota(request):
     except:
         return JsonResponse({'zarejestrowano': 'false'})
     try:
+        print(pilot)
         lot.pilot = pilot
-        lot.clean()
         lot.save()
     except:
         return JsonResponse({'zarejestrowano': 'false'})
