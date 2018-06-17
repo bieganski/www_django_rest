@@ -1,0 +1,10 @@
+{% extends 'linie_lotnicze/szablon.html' %}
+
+{% block body %}
+    <br><br>Podaj dane osoby, której kupujesz bilet:
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit">
+    </form>
+{% endblock %}

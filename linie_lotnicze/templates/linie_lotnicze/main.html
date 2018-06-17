@@ -1,0 +1,42 @@
+{% extends 'linie_lotnicze/szablon.html' %}
+
+{% block title %}
+    Strona główna
+{% endblock %}
+
+{% block body %}
+    <article>
+        <section>
+            <a href="/ajax">ZADANIE 3: ZAŁOGI</a>
+        </section>
+
+
+        <section>
+            <h2>Wykaz wszystkich lotów</h2>
+
+            Wybierz dzień, z którego chcesz zobaczyć wszystkie loty.
+            {{ request.dzien }}
+            <form method="GET">
+                <input type="date" name="dzien">
+                <input type="submit" value="Wybierz">
+            </form>
+
+
+            Kliknij wybrany lot aby zobaczyć szczegóły.
+            <table border="solid">
+                <tr>
+                    <th>Skąd</th>
+                    <th>Dokąd</th>
+                    <th>Odlot</th>
+                </tr>
+                {% for lot in loty %}
+                    <tr onclick="window.location.assign('{% url 'linie_lotnicze:lot' lot.pk %}');">
+                        <td>{{ lot.poczatek_lotnisko }}</td>
+                        <td>{{ lot.koniec_lotnisko }}</td>
+                        <td>{{ lot.poczatek_czas }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </section>
+    </article>
+{% endblock %}

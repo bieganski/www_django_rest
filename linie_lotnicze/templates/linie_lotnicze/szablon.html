@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static "linie_lotnicze/style.css" %}"/>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+        Zalogowany jako {{ request.user.username }}.
+        <a href="{% url 'linie_lotnicze:logout' %}">
+            Wyloguj się.
+        </a>
+    {% else %}
+        Niezalogowany.
+        <a href="{% url 'linie_lotnicze:login' %}">
+            Zaloguj się.
+        </a>
+        Nie masz konta?
+        <a href="{% url 'linie_lotnicze:register' %}">
+            Zarejestruj się.
+        </a>
+    {% endif %}
+
+    {% block body %}
+        {# reszta body #}
+    {% endblock %}
+</body>
+</html>

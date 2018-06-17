@@ -1,0 +1,45 @@
+{% extends 'linie_lotnicze/szablon.html' %}
+
+{% block body %}
+    <h2>Wybrales lot nr {{ lot.pk }}</h2>
+
+    <table border="solid">
+        <tr>
+            <th>Skąd</th>
+            <th>Dokąd</th>
+            <th>Odlot</th>
+            <th>Przylot</th>
+            <th>Samolot</th>
+            <th>Wolne miejsca</th>
+        </tr>
+        <tr>
+            <th>{{ lot.poczatek_lotnisko }}</th>
+            <th>{{ lot.koniec_lotnisko }}</th>
+            <th>{{ lot.poczatek_czas }}</th>
+            <th>{{ lot.koniec_czas }}</th>
+            <th>{{ lot.samolot }}</th>
+            <th>{{ wolne }}</th>
+        </tr>
+    </table>
+
+    Kupione bilety:
+    <table border="solid">
+        <tr>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+        </tr>
+        {% for bilet in bilety %}
+        <tr>
+            <td>{{ bilet.pasazer.imie }}</td>
+            <td>{{ bilet.pasazer.nazwisko }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% if wolne > 0 %}
+        <a href="{% url 'linie_lotnicze:kup_bilet' lot.pk%}">KUP BILET NA TEN LOT</a>
+    {% else %}
+        Brak wolnych miejsc na ten lot.
+    {% endif %}
+
+{% endblock %}
