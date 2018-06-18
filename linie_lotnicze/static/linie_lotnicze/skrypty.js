@@ -58,7 +58,6 @@ function ustaw_klikowalnosc(id, pk, pilot, lot) {
     document.getElementById(id).onclick = function () {
                             czysc_main();
                             $.getJSON("/ajax/piloci", {}, function (piloci) {
-                                alert("dostalem pilotow!");
                                 $('main').html('<p>Lot: ' + lot + '</p>\n' +
                                            '<p>Pilot: ' + pilot + '</p>\n' +
                                            '<div class="form-group">\n' +
@@ -79,7 +78,6 @@ function ustaw_klikowalnosc(id, pk, pilot, lot) {
 function stworz_tabele_lotow(data) {
     $.getJSON("/ajax/loty/", {'data': data})
         .done(function (lista_lotow) {
-            alert("odebralem liste lotow!");
             czysc_main();
             $('main').html('<table id="tabela_loty">\n' +
                       '<tr>\n' +
@@ -129,7 +127,6 @@ function wyslij_date() {
         let haslo = localStorage.getItem('haslo');
         $.post("/ajax/login/", {'login': login, 'haslo': haslo})
             .done(function (wyn) {
-                alert("zalogowany!");
                 stworz_tabele_lotow(data);
             })
             .fail(function(xhr, status, error) {

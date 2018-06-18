@@ -1,9 +1,6 @@
 from django.test import TestCase
 from datetime import datetime, timedelta
 from .models import *
-# from selenium.webdriver.firefox.webdriver import WebDriver
-# from selenium.webdriver.support.select import Select
-# from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 import json
 
 class testyREST(TestCase):
