@@ -19,5 +19,5 @@ urlpatterns = [
     path('ajax/piloci/', views.daj_liste_pilotow, name='piloci'),
     path('ajax/loty/', views.daj_liste_lotow, name='loty'),
     path('ajax/zamien_zaloge/', views.zamien_zaloge, name='zamien_zaloge'),
-    path('ajax/rejestruj_pilota/', views.rejestruj_pilota, name='rejestruj_pilota'),
+    #path('ajax/rejestruj_pilota/', views.rejestruj_pilota, name='rejestruj_pilota'),
 ]

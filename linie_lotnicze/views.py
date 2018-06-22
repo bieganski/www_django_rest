@@ -118,11 +118,9 @@ def ajax_loguj(request):
     if 'login' not in request.POST or 'haslo' not in request.POST:
         raise PermissionDenied
     user = authenticate(username=request.POST['login'], password=request.POST['haslo'])
-    print(request.POST['login'] + request.POST['haslo'])
     # authenticate nie ustawia sesji (bestanowe)
     if user is None:
         raise PermissionDenied
-    print("udalo sie")
     return HttpResponse()
 
 
@@ -133,7 +131,8 @@ def daj_liste_pilotow(request):
 
 def daj_liste_lotow(request):
     if request.GET['data'] is None:
-        return Lot.objects.none()
+        response = serializers.serialize("json", Lot.objects.none())
+        return HttpResponse(response, content_type='application/json')
     data = datetime.strptime(request.GET['data'], '%Y-%m-%d')
     #return JsonResponse({"loty": Lot.objects.filter(poczatek_czas=data).order_by('poczatek_czas')})
     response = serializers.serialize("json", Lot.objects.all().order_by('poczatek_czas'))
@@ -150,55 +149,29 @@ def zalogi_data(request):
           poczatek_czas__year=request.GET['year']) |
         Q(koniec_czas__day=request.GET['day'], koniec_czas__month=request.GET['month'],
           koniec_czas__year=request.GET['year']))
-    for lot in loty.filter(crew__isnull=False): # przypisana załoga
+    for lot in loty.filter(zaloga_isnull=False): # przypisana załoga
         wyn.append({'lotID': lot.pk, 'zaloga': lot.zaloga.kapitanImie + " " + lot.zaloga.kapitanNazwisko})
     return JsonResponse({'zalogi': wyn})
 
 
 @require_POST
+@csrf_exempt
 @transaction.atomic
 def zamien_zaloge(request):
-    if 'lotID' not in request.POST or 'kapitanImie' not in request.POST or 'kapitanNazwisko' not in request.POST\
-            or 'login' not in request.POST or 'password' not in request.POST:
+    if 'lot_pk' not in request.POST or 'pilot_pk' not in request.POST\
+            or 'login' not in request.POST or 'haslo' not in request.POST:
         raise PermissionDenied
 
     user = authenticate(username=request.POST['login'], password=request.POST['haslo'])
     if user is None:
         raise PermissionDenied
 
-    zaloga = get_object_or_404(Zaloga, kapitanImie=request.POST['kapitanImie'],
-                                   kapitanNazwisko=request.POST['kapitanNazwisko'])
-    lot = get_object_or_404(Lot, pk=request.POST['lotID'])
+    zaloga = get_object_or_404(Zaloga, pk=request.POST['pilot_pk'])
+    lot = get_object_or_404(Lot, pk=request.POST['lot_pk'])
     lot.zaloga = zaloga
     try:
         lot.full_clean()
         lot.save()
-    except ValidationError:
+    except ValidationError as e:
         raise PermissionDenied
     return HttpResponse()
-
-
-@require_POST
-@csrf_exempt
-@transaction.atomic
-def rejestruj_pilota(request):
-    if 'login' not in request.POST and 'haslo' not in request.POST and \
-        'pilot_pk' not in request.POST and 'lot_pk' not in request.POST:
-        return JsonResponse({'zarejestrowano': 'false'})
-
-    user = authenticate(username=request.POST['login'], password=request.POST['haslo'])
-    if user is None:
-        return JsonResponse({'zarejestrowano': 'false'})
-    try:
-        lot = Lot.objects.get(pk=request.POST['lot_pk'])
-        pilot = Zaloga.objects.get(pk=request.POST['pilot_pk'])
-    except:
-        return JsonResponse({'zarejestrowano': 'false'})
-    try:
-        print(pilot)
-        lot.pilot = pilot
-        lot.save()
-    except:
-        return JsonResponse({'zarejestrowano': 'false'})
-
-    return JsonResponse({'zarejestrowano': 'true'})
