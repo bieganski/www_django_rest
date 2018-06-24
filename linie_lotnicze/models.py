@@ -47,11 +47,12 @@ class Lot(models.Model):
     def clean(self):
         if self.poczatek_czas >= self.koniec_czas:
             raise ValidationError("Ujemny czas lotu!")
-        for jakis_lot in Lot.objects.filter(samolot=self.samolot).exclude(id=self.id):
+        wszystkie = Lot.objects.filter(samolot=self.samolot).exclude(id=self.id)
+        for jakis_lot in wszystkie:
             if jakis_lot.poczatek_czas <= self.poczatek_czas <= jakis_lot.koniec_czas \
                     or jakis_lot.poczatek_czas <= self.koniec_czas <= jakis_lot.koniec_czas:
                 raise ValidationError("Dwa loty w jednym czasie!")
-        if Zaloga is not None:
+        if self.zaloga is not None:
             lotyZalogi = Lot.objects.filter(zaloga=self.zaloga)
             loty1 = lotyZalogi.filter(poczatek_czas__gt=self.poczatek_czas, poczatek_czas__lt=self.koniec_czas)
             loty2 = lotyZalogi.filter(koniec_czas__lt=self.koniec_czas, koniec_czas__gt=self.poczatek_czas)
@@ -62,7 +63,6 @@ class Lot(models.Model):
             if loty2.count() is None:
                 ile2 = 0
             if ile1 + ile2 > 0:
-                print("ostro {}".format(ile1 + ile2))
                 raise ValidationError("Zaloga nie moze sie rozdwoić!")
 
         lotyDanegoDnia = Lot.objects.filter(poczatek_czas__day=self.poczatek_czas.day)

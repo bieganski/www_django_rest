@@ -181,7 +181,6 @@ function dodaj_pilota() {
     let lot_pk = parseInt($('#lot_pk').text());
     let login = localStorage.getItem('login');
     let haslo = localStorage.getItem('haslo');
-    alert("bede wyslylal " + login + haslo);
     $.post("/ajax/zamien_zaloge/", {'login': login, 'haslo': haslo, 'pilot_pk': pilot_pk, 'lot_pk': lot_pk})
         .done(function (wyn) {
             alert("Udało się przypisać pilota");
